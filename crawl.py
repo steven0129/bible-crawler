@@ -8,7 +8,7 @@ options.add_argument('--headless')
 driver = webdriver.Firefox(options=options, executable_path='./geckodriver')
 driver.get('https://bible.fhl.net/new/read.php')
 
-with open('bible.txt', 'w') as BIBLE:
+with open('bible.rec', 'a') as BIBLE:
     try:
         while(1):
             book = driver.find_element_by_xpath('/html/body/font[1]').text
@@ -19,10 +19,17 @@ with open('bible.txt', 'w') as BIBLE:
                 if(line == ''): break
                 arr = line.split(' ')
                 num = arr[0]
+                chap = num.split(':')[0]
+                verse = num.split(':')[1]
                 arr.pop(0)
                 content = ''.join(arr)
                 print(f'處理{book}{num}中...')
-                BIBLE.write(f'{book}\t{num}\t{content}\n')
+                
+                BIBLE.write('@record\n')
+                BIBLE.write(f'@book:{book}\n')
+                BIBLE.write(f'@chap:{chap}\n')
+                BIBLE.write(f'@verse:{verse}\n')
+                BIBLE.write(f'@content:{content}\n')
 
             driver.find_element_by_xpath('//*[@id="pnext"]').click()
     except:
